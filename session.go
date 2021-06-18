@@ -74,7 +74,9 @@ func (s *Session) process(e girc.Event) (err error) {
 }
 
 func (s *Session) storeLine(line string) {
-	s.lines = append(s.lines, strings.Split(line, "\n")...)
+	// Linebreaks come through escaped so we're stuck with this
+	// silly little hack
+	s.lines = append(s.lines, strings.Split(line, "\\n")...)
 }
 
 func (s *Session) save() (err error) {

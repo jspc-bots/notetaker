@@ -105,8 +105,6 @@ func (b Bot) messageRouter(c *girc.Client, e girc.Event) {
 	dst := e.Params[0]
 
 	if session, ok := b.sessions[dst]; ok {
-		log.Print(dst)
-
 		err = session.process(e)
 		if err != nil {
 			log.Printf("error processing session bound message: %v", err)
