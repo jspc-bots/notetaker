@@ -190,6 +190,11 @@ func (b Bot) saveNote(originator string, groups [][]byte) (err error) {
 }
 
 func (b Bot) closeNote(originator string, groups [][]byte) (err error) {
+	err = b.saveNote(originator, groups)
+	if err != nil {
+		return
+	}
+
 	id := string(groups[1])
 
 	session, err := b.getValidSession(originator, id)
