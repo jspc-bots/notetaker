@@ -168,7 +168,6 @@ func (b Bot) saveNote(originator string, groups [][]byte) (err error) {
 	session, err := b.getValidSession(originator, id)
 	if err != nil {
 		b.client.Cmd.Message(originator, err.Error())
-		b.client.Cmd.Message(session.channelName, err.Error())
 
 		return
 	}
@@ -197,6 +196,9 @@ func (b Bot) closeNote(originator string, groups [][]byte) (err error) {
 
 	session, err := b.getValidSession(originator, id)
 	if err != nil {
+		// There's no point printing here- in fact, I doubt we can
+		// even hit this branch when we've run saveNote- it will
+		// bail on this exact check way before we get here
 		return
 	}
 
