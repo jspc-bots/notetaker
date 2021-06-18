@@ -74,7 +74,7 @@ func (s *Session) process(e girc.Event) (err error) {
 }
 
 func (s *Session) storeLine(line string) {
-	s.lines = append(s.lines, line)
+	s.lines = append(s.lines, strings.Split(line, "\n")...)
 }
 
 func (s *Session) save() (err error) {
