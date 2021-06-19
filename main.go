@@ -44,5 +44,5 @@ func main() {
 		panic(err)
 	}
 
-	c.client.Connect()
+	c.bottom.Client.Connect()
 }

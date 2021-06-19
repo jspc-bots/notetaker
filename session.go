@@ -7,6 +7,7 @@ import (
 
 	"github.com/ergochat/irc-go/ircfmt"
 	"github.com/google/go-github/v35/github"
+	"github.com/jspc/bottom"
 	"github.com/lrstanley/girc"
 	"github.com/rs/xid"
 )
@@ -18,6 +19,21 @@ Useful commands:
   $b/MSG notetaker close [id]$r  - Save these notes, then boot the notetaker bot
 `
 )
+
+type Sessions map[string]*Session
+
+func (s Sessions) Do(ctx bottom.Context, e girc.Event) (err error) {
+	// Look for a session with the name of the channel we're in
+	// if there, then store and continue
+	//
+	// If not, then continue merrily along
+	dst := e.Params[0]
+	if session, ok := s[dst]; ok {
+		return session.process(e)
+	}
+
+	return
+}
 
 type Session struct {
 	gist        *github.Gist
