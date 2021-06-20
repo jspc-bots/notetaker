@@ -55,33 +55,33 @@ func New(user, password, server string, verify bool, gh *github.Client) (b Bot, 
 	return
 }
 
-func (b Bot) getHelp(originator string, _ []string) (err error) {
+func (b Bot) getHelp(_, channel string, _ []string) (err error) {
 	for _, line := range strings.Split(HelpText, "\n") {
-		b.bottom.Client.Cmd.Message(originator, ircfmt.Unescape(line))
+		b.bottom.Client.Cmd.Message(channel, ircfmt.Unescape(line))
 	}
 
 	return
 }
 
-func (b Bot) newNote(originator string, groups []string) (err error) {
+func (b Bot) newNote(_, channel string, groups []string) (err error) {
 	password := groups[1]
 
-	s, err := NewSession(b.bottom.Client, b.github, originator, password)
+	s, err := NewSession(b.bottom.Client, b.github, channel, password)
 	if err != nil {
 		return
 	}
 
 	b.sessions[s.channelName] = s
 
-	b.bottom.Client.Cmd.Messagef(originator, "created channel %s, which you should be invited to join", s.channelName)
+	b.bottom.Client.Cmd.Messagef(channel, "created channel %s, which you should be invited to join", s.channelName)
 
 	return
 }
 
-func (b Bot) saveNote(originator string, groups []string) (err error) {
+func (b Bot) saveNote(_, channel string, groups []string) (err error) {
 	id := groups[1]
 
-	session, err := b.getValidSession(originator, id)
+	session, err := b.getValidSession(channel, id)
 	if err != nil {
 		return
 	}
@@ -91,21 +91,21 @@ func (b Bot) saveNote(originator string, groups []string) (err error) {
 		return
 	}
 
-	b.bottom.Client.Cmd.Messagef(originator, "gist location: %s", *session.gist.HTMLURL)
+	b.bottom.Client.Cmd.Messagef(channel, "gist location: %s", *session.gist.HTMLURL)
 	b.bottom.Client.Cmd.Messagef(session.channelName, "gist location: %s", *session.gist.HTMLURL)
 
 	return
 }
 
-func (b Bot) closeNote(originator string, groups []string) (err error) {
-	err = b.saveNote(originator, groups)
+func (b Bot) closeNote(originator, channel string, groups []string) (err error) {
+	err = b.saveNote(originator, channel, groups)
 	if err != nil {
 		return
 	}
 
 	id := string(groups[1])
 
-	session, err := b.getValidSession(originator, id)
+	session, err := b.getValidSession(channel, id)
 	if err != nil {
 		return
 	}
@@ -113,7 +113,7 @@ func (b Bot) closeNote(originator string, groups []string) (err error) {
 	return session.close()
 }
 
-func (b Bot) getValidSession(originator, id string) (s *Session, err error) {
+func (b Bot) getValidSession(channel, id string) (s *Session, err error) {
 	channelName := fmt.Sprintf("#notetaker-%s", id)
 
 	var ok bool
@@ -124,7 +124,7 @@ func (b Bot) getValidSession(originator, id string) (s *Session, err error) {
 		return
 	}
 
-	if s.user != originator {
+	if s.user != channel {
 		err = fmt.Errorf("you were not the requestor of this session")
 	}
 
