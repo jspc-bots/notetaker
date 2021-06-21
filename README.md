@@ -1,6 +1,8 @@
-# IRC Notes Bot
+# Notetaker
 
 This bot lives to take notes. It lives in a `/query`/ `/msg` session, and takes down anything you say, storing it in a gist somewhere.
+
+These gists are saved as markdown files, allowing all of the markdown constructs you need.
 
 ## Flow
 
